@@ -1,20 +1,17 @@
 stages:
-  - sync
+  - sync
 
 push_to_github:
-  stage: sync
-  image: alpine:latest
-  before_script:
-    - apk add --no-cache git
-  script:
-    - git config --global user.email "gitlab-bot@yourdomain.com"
-    - git config --global user.name "GitLab CI Bot"
-
-    - GITHUB_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/garrettgerver/DDD-Project.git"
-    - git remote add github-dest $GITHUB_REPO
-
-    - git push github-dest HEAD:$CI_COMMIT_REF_NAME --force
-  
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+  stage: sync
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache git
+  script:
+    - git config --global user.email "gitlab-bot@yourdomain.com"
+    - git config --global user.name "GitLab CI Bot"
+    - GITHUB_REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/garrettgerver/DDD-Project.git"
+    - git remote add github-dest $GITHUB_REPO
+    - git push github-dest HEAD:$CI_COMMIT_REF_NAME --force
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
 
