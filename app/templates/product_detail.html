@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}{{ product.name }} — ShopApp{% endblock %}
+{% block content %}
+<a href="{{ url_for('products') }}" style="color:var(--muted); font-size:0.85rem;">← Back to products</a>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:3rem; margin-top:2rem;">
+  <div>
+    <div style="background:var(--surface); border:1px solid #2a2a30; border-radius:var(--radius); aspect-ratio:1; display:flex; align-items:center; justify-content:center; font-size:6rem;">
+      🛍️
+    </div>
+  </div>
+  <div>
+    <p style="color:var(--muted); font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem;">{{ product.category }}</p>
+    <h1 style="font-family:'Playfair Display',serif; font-size:2rem; margin-bottom:0.5rem;">{{ product.name }}</h1>
+    {% if product.brand %}<p style="color:var(--muted); margin-bottom:0.75rem;">{{ product.brand }}{% if product.size %} · {{ product.size }}{% endif %}</p>{% endif %}
+    <p style="font-size:2rem; color:var(--accent); font-weight:700; margin-bottom:1.5rem;">${{ '%.2f'|format(product.price) }}</p>
+    {% if product.description %}
+    <p style="color:var(--muted); line-height:1.7; margin-bottom:1.5rem;">{{ product.description }}</p>
+    {% endif %}
+
+    <div style="background:var(--surface2); border-radius:var(--radius); padding:1rem; margin-bottom:1.5rem;">
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.25rem;">Stock availability</p>
+      <p style="font-weight:600; color:{% if total_stock > 0 %}var(--success){% else %}var(--danger){% endif %};">
+        {% if total_stock > 0 %}{{ total_stock }} units available{% else %}Out of stock{% endif %}
+      </p>
+    </div>
+
+    {% if session.get('role') == 'customer' %}
+    {% if total_stock > 0 %}
+    <form method="post" action="{{ url_for('cart_add', pid=product.product_id) }}" style="display:flex; gap:0.75rem; align-items:center;">
+      <input type="number" name="qty" value="1" min="1" max="{{ total_stock }}" style="width:80px;"/>
+      <button class="btn btn-primary" style="flex:1;">Add to Cart</button>
+    </form>
+    {% else %}
+    <button class="btn btn-secondary" disabled style="width:100%; opacity:0.5;">Out of Stock</button>
+    {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+{% if stock %}
+<div style="margin-top:3rem;">
+  <h3 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1rem; color:var(--muted);">Warehouse Availability</h3>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table>
+      <thead><tr><th>Warehouse</th><th>Units</th></tr></thead>
+      <tbody>
+        {% for s in stock %}
+        <tr><td>{{ s.address }}</td><td>{{ s.qnum }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

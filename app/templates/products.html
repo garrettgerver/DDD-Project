@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Products — ShopApp{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Products</h1>
+    <p class="page-subtitle">{{ products|length }} item(s) found</p>
+  </div>
+</div>
+
+<form method="get" class="search-bar">
+  <input type="text" name="q" value="{{ q }}" placeholder="Search products…"/>
+  <select name="category">
+    <option value="">All Categories</option>
+    {% for c in categories %}
+    <option value="{{ c.category }}" {% if selected_cat == c.category %}selected{% endif %}>{{ c.category }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="btn btn-primary">Search</button>
+  {% if q or selected_cat %}<a href="{{ url_for('products') }}" class="btn btn-secondary">Clear</a>{% endif %}
+</form>
+
+<div class="product-grid">
+  {% for p in products %}
+  <a href="{{ url_for('product_detail', pid=p.product_id) }}" style="color:inherit; text-decoration:none;">
+    <div class="product-card">
+      <div class="product-img">🏀</div>
+      <div class="product-info">
+        <div class="product-cat">{{ p.category or '—' }}</div>
+        <div class="product-name">{{ p.name }}</div>
+        {% if p.brand %}<div style="font-size:0.78rem; color:var(--muted); margin-bottom:0.4rem;">{{ p.brand }}</div>{% endif %}
+        <div class="product-price">${{ '%.2f'|format(p.price) }}</div>
+      </div>
+    </div>
+  </a>
+  {% else %}
+  <p style="color:var(--muted); grid-column:1/-1; text-align:center; padding:3rem;">No products found.</p>
+  {% endfor %}
+</div>
+{% endblock %}

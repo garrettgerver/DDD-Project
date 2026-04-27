@@ -1,0 +1,90 @@
+enum OrderStatus {
+    ISSUED
+    SENT
+    RECEIVED
+}
+
+enum DeliveryType {
+    STANDARD
+    EXPRESS
+}
+
+type Customer {
+    id: ID!
+    name: String!
+    balance: Float!
+    addresses: [CustomerAddress!]!
+    creditCards: [CreditCard!]!
+    orders: [Order!]!
+}
+
+type CustomerAddress {
+    id: ID!
+    customerId: ID!
+    address: String!
+}
+
+type CreditCard {
+    cardId: ID!
+    customerId: ID!
+    number: String!
+    address: String!
+}
+
+type Product {
+    productId: ID!
+    name: String!
+    category: String
+    price: Float!
+    type: String
+    brand: String
+    size: String
+    description: String
+    stock: [Stock!]!
+}
+
+type Warehouse {
+    warehouseId: ID!
+    address: String!
+    stocks: [Stock!]!
+}
+
+type Stock {
+    stockId: ID!
+    productId: ID!
+    warehouseId: ID!
+    quantity: Int! # Maps to qnum
+}
+
+type StaffMember {
+    staffId: ID!
+    name: String!
+    address: String
+    salary: Float
+    jobTitle: String
+}
+
+type Order {
+    orderId: ID!
+    customerId: ID!
+    status: OrderStatus!
+    customer: Customer!
+    contents: [OrderContent!]!
+    deliveryPlan: DeliveryPlan
+}
+
+type OrderContent {
+    orderId: ID!
+    productId: ID!
+    quantity: Int!
+    product: Product!
+}
+
+type DeliveryPlan {
+    deliveryId: ID!
+    orderId: ID!
+    type: DeliveryType!
+    price: Float!
+    deliveryDate: String # Dates are often handled as Strings or custom Date scalars
+    shipDate: String
+}

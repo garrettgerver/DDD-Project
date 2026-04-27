@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Customers — ShopApp{% endblock %}
+{% block content %}
+<h1 class="page-title" style="margin-bottom:2rem;">Customer Accounts</h1>
+<div class="card" style="padding:0; overflow:hidden;">
+  <table>
+    <thead><tr><th>ID</th><th>Name</th><th>Balance</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for c in customers %}
+      <tr>
+        <td style="color:var(--muted);">#{{ c.customer_id }}</td>
+        <td>{{ c.name }}</td>
+        <td style="color:{% if c.balance > 0 %}var(--danger){% else %}var(--success){% endif %}; font-weight:600;">
+          ${{ '%.2f'|format(c.balance) }}
+        </td>
+        <td><a href="{{ url_for('staff_customer_detail', cid=c.customer_id) }}" class="btn btn-secondary btn-sm">View</a></td>
+      </tr>
+      {% else %}
+      <tr><td colspan="4" style="text-align:center; color:var(--muted); padding:2rem;">No customers yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
