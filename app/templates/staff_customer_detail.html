@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}Customer #{{ customer.customer_id }} — ShopApp{% endblock %}
+{% block content %}
+<a href="{{ url_for('staff_customers') }}" style="color:var(--muted); font-size:0.85rem;">← Back to customers</a>
+<div style="margin-top:1.5rem;">
+  <h1 class="page-title">{{ customer.name }}</h1>
+  <p style="color:var(--muted); margin-bottom:2rem;">
+    Customer #{{ customer.customer_id }} &nbsp;·&nbsp;
+    Balance: <span style="color:{% if customer.balance > 0 %}var(--danger){% else %}var(--success){% endif %}; font-weight:600;">
+      ${{ '%.2f'|format(customer.balance) }}
+    </span>
+  </p>
+
+  <h2 style="font-family:'Playfair Display',serif; font-size:1.2rem; margin-bottom:1rem;">Orders</h2>
+  <div class="card" style="padding:0; overflow:hidden;">
+    <table>
+      <thead><tr><th>Order #</th><th>Status</th><th>Delivery</th><th>Update Status</th></tr></thead>
+      <tbody>
+        {% for o in orders %}
+        <tr>
+          <td>#{{ o.order_id }}</td>
+          <td><span class="badge badge-{{ o.status }}">{{ o.status }}</span></td>
+          <td>{{ o.delivery_type or 'standard' }}</td>
+          <td>
+            <form method="post" action="{{ url_for('staff_update_order_status', oid=o.order_id) }}" style="display:flex; gap:0.5rem;">
+              <select name="status" style="width:auto; padding:0.3rem 0.6rem; font-size:0.8rem;">
+                <option value="issued" {% if o.status=='issued' %}selected{% endif %}>Issued</option>
+                <option value="sent"   {% if o.status=='sent'   %}selected{% endif %}>Sent</option>
+                <option value="received" {% if o.status=='received' %}selected{% endif %}>Received</option>
+              </select>
+              <button class="btn btn-primary btn-sm">Update</button>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="4" style="text-align:center; color:var(--muted); padding:2rem;">No orders.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

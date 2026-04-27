@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+{% block title %}Account — ShopApp{% endblock %}
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">My Account</h1>
+    <p class="page-subtitle">{{ customer.name }} · Balance: <span style="color:var(--accent);">${{ '%.2f'|format(customer.balance) }}</span></p>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 1fr; gap:2rem;">
+  <!-- ADDRESSES -->
+  <div>
+    <div class="card">
+      <h3 class="card-title">Addresses</h3>
+      {% for addr in addresses %}
+      <div style="background:var(--surface2); border-radius:8px; padding:0.75rem 1rem; margin-bottom:0.75rem; display:flex; justify-content:space-between; align-items:center; gap:1rem;">
+        <span style="font-size:0.9rem;">{{ addr.address }}</span>
+        <div style="display:flex; gap:0.5rem; flex-shrink:0;">
+          <button onclick="this.closest('div').querySelector('.edit-form').classList.toggle('hidden')" class="btn btn-secondary btn-sm">Edit</button>
+          <form method="post" action="{{ url_for('delete_address', aid=addr.id) }}" onsubmit="return confirm('Delete?')">
+            <button class="btn btn-danger btn-sm">✕</button>
+          </form>
+        </div>
+      </div>
+      <div class="edit-form hidden" style="margin-bottom:0.75rem;">
+        <form method="post" action="{{ url_for('edit_address', aid=addr.id) }}" style="display:flex; gap:0.5rem;">
+          <input type="text" name="address" value="{{ addr.address }}" style="flex:1;"/>
+          <button class="btn btn-primary btn-sm">Save</button>
+        </form>
+      </div>
+      {% else %}
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:1rem;">No addresses yet.</p>
+      {% endfor %}
+      <hr style="border-color:#2a2a30; margin:1rem 0;"/>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.75rem;">Add new address</p>
+      <form method="post" action="{{ url_for('add_address') }}" style="display:flex; gap:0.5rem;">
+        <input type="text" name="address" placeholder="123 Main St, City, State" style="flex:1;" required/>
+        <button class="btn btn-primary btn-sm">Add</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- CREDIT CARDS -->
+  <div>
+    <div class="card">
+      <h3 class="card-title">Credit Cards</h3>
+      {% for card in cards %}
+      <div style="background:var(--surface2); border-radius:8px; padding:0.75rem 1rem; margin-bottom:0.75rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:0.9rem; font-weight:500;">•••• •••• •••• {{ card.number[-4:] }}</div>
+            <div style="font-size:0.78rem; color:var(--muted);">{{ card.address }}</div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button onclick="this.closest('div').parentElement.querySelector('.edit-form').classList.toggle('hidden')" class="btn btn-secondary btn-sm">Edit</button>
+            <form method="post" action="{{ url_for('delete_card', crd=card.card_id) }}" onsubmit="return confirm('Delete card?')">
+              <button class="btn btn-danger btn-sm">✕</button>
+            </form>
+          </div>
+        </div>
+        <div class="edit-form hidden" style="margin-top:0.75rem;">
+          <form method="post" action="{{ url_for('edit_card', crd=card.card_id) }}">
+            <div class="form-group" style="margin-bottom:0.5rem;">
+              <label>Card Number</label>
+              <input type="text" name="number" value="{{ card.number }}"/>
+            </div>
+            <div class="form-group" style="margin-bottom:0.5rem;">
+              <label>Billing Address</label>
+              <input type="text" name="address" value="{{ card.address }}"/>
+            </div>
+            <button class="btn btn-primary btn-sm">Save</button>
+          </form>
+        </div>
+      </div>
+      {% else %}
+      <p style="color:var(--muted); font-size:0.85rem; margin-bottom:1rem;">No cards yet.</p>
+      {% endfor %}
+      <hr style="border-color:#2a2a30; margin:1rem 0;"/>
+      <p style="font-size:0.85rem; color:var(--muted); margin-bottom:0.75rem;">Add new card</p>
+      <form method="post" action="{{ url_for('add_card') }}">
+        <div class="form-group" style="margin-bottom:0.5rem;">
+          <label>Card Number</label>
+          <input type="text" name="number" placeholder="1234567890123456" required/>
+        </div>
+        <div class="form-group" style="margin-bottom:0.75rem;">
+          <label>Billing Address</label>
+          <input type="text" name="address" placeholder="123 Billing St" required/>
+        </div>
+        <button class="btn btn-primary btn-sm">Add Card</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<style>.hidden { display:none; }</style>
+{% endblock %}

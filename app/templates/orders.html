@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}My Orders — ShopApp{% endblock %}
+{% block content %}
+<h1 class="page-title" style="margin-bottom:2rem;">My Orders</h1>
+{% if orders %}
+<div class="card" style="padding:0; overflow:hidden;">
+  <table>
+    <thead><tr><th>Order #</th><th>Status</th><th>Delivery</th><th>Delivery Price</th><th>Ship By</th><th></th></tr></thead>
+    <tbody>
+      {% for o in orders %}
+      <tr>
+        <td>#{{ o.order_id }}</td>
+        <td><span class="badge badge-{{ o.status }}">{{ o.status }}</span></td>
+        <td>{{ o.delivery_type or 'standard' }}</td>
+        <td>${{ '%.2f'|format(o.delivery_price or 0) }}</td>
+        <td>{{ o.ship_date or '—' }}</td>
+        <td><a href="{{ url_for('order_detail', oid=o.order_id) }}" class="btn btn-secondary btn-sm">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div style="text-align:center; padding:4rem; color:var(--muted);">
+  <p style="font-size:3rem; margin-bottom:1rem;">📦</p>
+  <p style="font-size:1.1rem; margin-bottom:1.5rem;">No orders yet</p>
+  <a href="{{ url_for('products') }}" class="btn btn-primary">Start Shopping</a>
+</div>
+{% endif %}
+{% endblock %}

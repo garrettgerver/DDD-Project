@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}SportSport — Home{% endblock %}
+{% block content %}
+<div style="text-align:center; padding: 4rem 2rem 3rem;">
+  <h1 style="font-family:'Playfair Display',serif; font-size:3.5rem; font-weight:700; line-height:1.1; margin-bottom:1rem;">
+    Welcome to <span style="color:var(--accent);">Sport🏀Sport</span>
+  </h1>
+  <p style="color:var(--muted); font-size:1.1rem; max-width:500px; margin:0 auto 2rem;">
+    Browse thousands of products across all categories. Fast delivery, easy returns.
+  </p>
+  <a href="{{ url_for('products') }}" class="btn btn-primary" style="font-size:1rem; padding:0.75rem 2rem;">
+    Shop Now →
+  </a>
+</div>
+
+{% if categories %}
+<div style="margin-bottom:2.5rem;">
+  <h2 class="page-title" style="font-size:1.4rem; margin-bottom:1rem;">Browse by Category</h2>
+  <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+    {% for c in categories %}
+    <a href="{{ url_for('products', category=c.category) }}" class="btn btn-secondary btn-sm">{{ c.category }}</a>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<h2 class="page-title" style="font-size:1.4rem; margin-bottom:1.25rem;">Featured Products</h2>
+<div class="product-grid">
+  {% for p in products %}
+  <a href="{{ url_for('product_detail', pid=p.product_id) }}" style="color:inherit; text-decoration:none;">
+    <div class="product-card">
+      <div class="product-img">🏀</div>
+      <div class="product-info">
+        <div class="product-cat">{{ p.category or '—' }}</div>
+        <div class="product-name">{{ p.name }}</div>
+        <div class="product-price">${{ '%.2f'|format(p.price) }}</div>
+      </div>
+    </div>
+  </a>
+  {% else %}
+  <p style="color:var(--muted); grid-column:1/-1; text-align:center; padding:3rem;">No products yet. Staff can add products.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — ShopApp{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1 class="page-title">Checkout</h1>
+</div>
+
+<div style="display:grid; grid-template-columns:1fr 340px; gap:2rem; align-items:start;">
+  <div>
+    <div class="card" style="margin-bottom:1.5rem; padding:0; overflow:hidden;">
+      <div style="padding:1.25rem; border-bottom:1px solid #2a2a30;">
+        <h3 class="card-title" style="margin:0;">Order Items</h3>
+      </div>
+      <table>
+        <thead><tr><th>Product</th><th>Qty</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.product.name }}</td>
+            <td>{{ item.qty }}</td>
+            <td style="color:var(--accent);">${{ '%.2f'|format(item.subtotal) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <form method="post">
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h3 class="card-title">Delivery Options</h3>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <label style="cursor:pointer;">
+            <input type="radio" name="delivery_type" value="standard" checked style="width:auto; margin-right:0.5rem;"/>
+            <span style="font-size:0.9rem; font-weight:500;">Standard — $5.99</span>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:0.25rem;">5–7 business days</p>
+          </label>
+          <label style="cursor:pointer;">
+            <input type="radio" name="delivery_type" value="express" style="width:auto; margin-right:0.5rem;"/>
+            <span style="font-size:0.9rem; font-weight:500;">Express — $14.99</span>
+            <p style="font-size:0.78rem; color:var(--muted); margin-top:0.25rem;">1–2 business days</p>
+          </label>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1.5rem;">
+        <h3 class="card-title">Payment Method</h3>
+        {% if cards %}
+          {% for card in cards %}
+          <label style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem; cursor:pointer;">
+            <input type="radio" name="card_id" value="{{ card.card_id }}" {% if loop.first %}checked{% endif %} style="width:auto;"/>
+            <div>
+              <div style="font-size:0.9rem; font-weight:500;">•••• •••• •••• {{ card.number[-4:] }}</div>
+              <div style="font-size:0.78rem; color:var(--muted);">{{ card.address }}</div>
+            </div>
+          </label>
+          {% endfor %}
+        {% else %}
+          <p style="color:var(--muted); font-size:0.85rem;">No cards on file. <a href="{{ url_for('account') }}">Add a card</a> first.</p>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary" style="width:100%; font-size:1rem; padding:0.75rem;" {% if not cards %}disabled{% endif %}>
+        Place Order →
+      </button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3 class="card-title">Summary</h3>
+    <div style="font-size:0.9rem; display:flex; flex-direction:column; gap:0.6rem;">
+      <div style="display:flex; justify-content:space-between;">
+        <span style="color:var(--muted);">Subtotal</span>
+        <span>${{ '%.2f'|format(subtotal) }}</span>
+      </div>
+      <div style="display:flex; justify-content:space-between;">
+        <span style="color:var(--muted);">Shipping</span>
+        <span id="ship-price">$5.99</span>
+      </div>
+      <div style="border-top:1px solid #2a2a30; padding-top:0.75rem; display:flex; justify-content:space-between; font-size:1.05rem; font-weight:600;">
+        <span>Total</span>
+        <span style="color:var(--accent);" id="total-price">${{ '%.2f'|format(subtotal + 5.99) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('input[name=delivery_type]').forEach(r => {
+    r.addEventListener('change', () => {
+      const price = r.value === 'express' ? 14.99 : 5.99;
+      document.getElementById('ship-price').textContent = '$' + price.toFixed(2);
+      document.getElementById('total-price').textContent = '$' + ({{ subtotal }} + price).toFixed(2);
+    });
+  });
+</script>
+{% endblock %}

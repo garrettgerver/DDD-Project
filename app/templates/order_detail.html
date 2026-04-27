@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Order #{{ order.order_id }} — ShopApp{% endblock %}
+{% block content %}
+<a href="{{ url_for('orders') }}" style="color:var(--muted); font-size:0.85rem;">← Back to orders</a>
+<div style="margin-top:1.5rem; display:grid; grid-template-columns:1fr 1fr; gap:2rem; align-items:start;">
+  <div>
+    <h1 class="page-title" style="margin-bottom:0.5rem;">Order #{{ order.order_id }}</h1>
+    <p style="color:var(--muted); margin-bottom:1.5rem;">Status: <span class="badge badge-{{ order.status }}">{{ order.status }}</span></p>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table>
+        <thead><tr><th>Product</th><th>Qty</th><th>Subtotal</th></tr></thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.quantity }}</td>
+            <td style="color:var(--accent);">${{ '%.2f'|format(item.subtotal) }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div>
+    {% if dp %}
+    <div class="card">
+      <h3 class="card-title">Delivery Plan</h3>
+      <div style="display:flex; flex-direction:column; gap:0.75rem; font-size:0.9rem;">
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--muted);">Type</span><span style="text-transform:capitalize;">{{ dp.type }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--muted);">Delivery Fee</span><span style="color:var(--accent);">${{ '%.2f'|format(dp.price) }}</span>
+        </div>
+        {% if dp.ship_date %}
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--muted);">Ship Date</span><span>{{ dp.ship_date }}</span>
+        </div>
+        {% endif %}
+        {% if dp.delivery_date %}
+        <div style="display:flex; justify-content:space-between;">
+          <span style="color:var(--muted);">Delivery Date</span><span>{{ dp.delivery_date }}</span>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
